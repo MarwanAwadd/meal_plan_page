@@ -2,152 +2,193 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>[AI-DRAFT] Meal Plan — review before relying on it</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>[AI-DRAFT] Cutting Plan — review before relying on it</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#FBFAF6;--ink:#1E2A24;--muted:#6B7A72;--line:#E3E0D6;--herb:#2F5A46;--chip:#F1EEE4;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    color-scheme:light;
+    --paper:#FBFAF6;--card:#FFFFFF;--ink:#1E2A24;--muted:#6B7A72;--line:#E3E0D6;--chip:#F1EEE4;
+    --herb:#2F5A46;--herb-bg:#2F5A46;--on-herb:#FFFFFF;
+    --note-bg:#FFF8EC;--note-bd:#F0E2C4;--note-tx:#7A5F2E;
+    --salad-bg:#F3F6EE;--salad-bd:#DDE7CF;
     --chicken:#C97B2C;--beef:#A23B34;--salmon:#D96A6A;--shake:#5B7C8C;
     --d-tuna:#2F8F8A;--d-fish:#4C7FA6;--d-yog:#6E8B4F;--glucose:#7A5CA6;
+    --gain:#A23B34;
   }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Inter",-apple-system,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:940px;margin:0 auto;padding:40px 28px 80px;}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --paper:#131916;--card:#1B231F;--ink:#E6ECE8;--muted:#9AA8A0;--line:#2D3833;--chip:#243029;
+      --herb:#8CC7A8;--note-bg:#2A2418;--note-bd:#4A3E25;--note-tx:#E8CB91;
+      --salad-bg:#1D291F;--salad-bd:#34452F;--gain:#E08A84;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --paper:#131916;--card:#1B231F;--ink:#E6ECE8;--muted:#9AA8A0;--line:#2D3833;--chip:#243029;
+    --herb:#8CC7A8;--note-bg:#2A2418;--note-bd:#4A3E25;--note-tx:#E8CB91;
+    --salad-bg:#1D291F;--salad-bd:#34452F;--gain:#E08A84;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  *,*::before,*::after{box-sizing:inherit;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Inter",-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:940px;margin:0 auto;padding:36px 22px 80px;}
 
   .head{border-bottom:2px solid var(--ink);padding-bottom:20px;}
-  .eyebrow{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--herb);margin:0 0 8px;}
-  h1{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(30px,5vw,46px);line-height:1.02;margin:0 0 14px;letter-spacing:-.01em;}
-  .targets{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;}
+  .eyebrow{font-family:"Space Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--herb);margin:0 0 8px;}
+  h1{font-family:"Bricolage Grotesque","Inter",sans-serif;font-weight:800;font-size:clamp(30px,5vw,46px);line-height:1.02;margin:0 0 14px;letter-spacing:-.01em;}
+  .targets{display:flex;flex-wrap:wrap;gap:10px;}
   .target{background:var(--ink);color:var(--paper);border-radius:8px;padding:8px 14px;display:flex;flex-direction:column;line-height:1.1;}
-  .target b{font-family:"Space Mono",monospace;font-size:19px;}
+  .target b{font-family:"Space Mono",ui-monospace,monospace;font-size:18px;}
   .target span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin-top:2px;}
   .draftflag{font-size:12.5px;color:var(--muted);margin:14px 0 0;}
 
-  section{margin-top:40px;}
-  .sec-label{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;}
-  h2{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:24px;margin:0 0 16px;letter-spacing:-.01em;}
-  h2 .num{color:var(--herb);font-family:"Space Mono",monospace;font-size:15px;font-weight:700;margin-right:10px;}
+  /* goals strip */
+  .goals{margin-top:18px;}
+  .goals-label{font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+  .goal-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+  .g{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+  .g .when{font-family:"Space Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .g .kg{font-family:"Bricolage Grotesque","Inter",sans-serif;font-weight:800;font-size:24px;line-height:1.1;margin-top:3px;}
+  .g .kg small{font-size:13px;font-weight:700;color:var(--muted);margin-left:2px;}
+  .g.start{background:var(--chip);}
+  .g.goal .kg{color:var(--herb);}
 
-  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px;}
+  .sec-label{font-family:"Space Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;}
+  h2{font-family:"Bricolage Grotesque","Inter",sans-serif;font-weight:700;font-size:24px;margin:0 0 16px;letter-spacing:-.01em;}
+  h2 .num{color:var(--herb);font-family:"Space Mono",ui-monospace,monospace;font-size:15px;font-weight:700;margin-right:10px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;}
   .card + .card{margin-top:14px;}
-
   .macros{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
-  .m{font-family:"Space Mono",monospace;font-size:12px;background:var(--chip);border-radius:6px;padding:5px 10px;color:var(--ink);}
+  .m{font-family:"Space Mono",ui-monospace,monospace;font-size:12px;background:var(--chip);border-radius:6px;padding:5px 10px;}
   .m b{color:var(--herb);}
+  .note{background:var(--note-bg);border:1px solid var(--note-bd);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--note-tx);margin-top:12px;}
 
   .shake{border-left:5px solid var(--shake);}
   ul.clean{list-style:none;padding:0;margin:10px 0 0;}
   ul.clean li{padding:6px 0;border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;gap:16px;}
   ul.clean li:last-child{border-bottom:none;}
-  ul.clean li span{color:var(--muted);font-family:"Space Mono",monospace;font-size:12px;white-space:nowrap;}
+  ul.clean li span{color:var(--muted);font-family:"Space Mono",ui-monospace,monospace;font-size:12px;white-space:nowrap;}
 
   .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .pick{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--herb);margin:0 0 8px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .pick{font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--herb);margin:0 0 8px;}
 
-  .fruitbox{background:#fff;border:1px solid var(--line);border-left:5px solid var(--chicken);border-radius:12px;padding:16px 20px;margin-top:14px;}
-  .fruitbox h4{font-family:"Bricolage Grotesque",sans-serif;font-size:15px;margin:0 0 4px;}
-  .fruitbox .tagline{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--herb);margin:0 0 10px;}
-  .fruitbox .list{display:flex;flex-wrap:wrap;gap:8px;}
+  .fruitbox{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--chicken);border-radius:12px;padding:16px 20px;margin-top:14px;}
+  .fruitbox h4{font-family:"Bricolage Grotesque","Inter",sans-serif;font-size:15px;margin:0 0 4px;}
+  .tagline{font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--herb);margin:0 0 10px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
   .chipf{background:var(--chip);border-radius:6px;padding:4px 10px;font-size:13px;}
-  .fruitbox .limit{font-size:12.5px;color:var(--muted);margin:10px 0 0;}
+  .small{font-size:12.5px;color:var(--muted);margin:10px 0 0;}
 
   .legend{display:flex;gap:18px;flex-wrap:wrap;background:var(--chip);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;}
-  .legend b{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--herb);}
+  .legend b{font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--herb);}
+  .raw{font-family:"Space Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:middle;}
 
-  .saladstd{background:#F3F6EE;border:1px solid #DDE7CF;border-radius:12px;padding:16px 20px;margin-bottom:16px;}
-  .saladstd h4{font-family:"Bricolage Grotesque",sans-serif;font-size:15px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
-  .saladstd .tagline{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--herb);margin:0 0 8px;}
+  .saladstd{background:var(--salad-bg);border:1px solid var(--salad-bd);border-radius:12px;padding:16px 20px;margin-bottom:16px;}
+  .saladstd h4{font-family:"Bricolage Grotesque","Inter",sans-serif;font-size:15px;margin:0 0 4px;}
   .saladstd p{margin:0;font-size:14px;}
 
   .dish{border-top:5px solid var(--herb);}
-  .dish.chicken{border-top-color:var(--chicken);}
-  .dish.beef{border-top-color:var(--beef);}
-  .dish.salmon{border-top-color:var(--salmon);}
-  .dish.d-tuna{border-top-color:var(--d-tuna);}
-  .dish.d-fish{border-top-color:var(--d-fish);}
-  .dish.d-yog{border-top-color:var(--d-yog);}
-  .dish h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:19px;margin:0 0 2px;}
-  .dish .week{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;}
-  .dish .tag{display:inline-block;font-family:"Space Mono",monospace;font-size:11px;padding:3px 9px;border-radius:20px;color:#fff;margin-bottom:12px;}
-  .chicken .tag{background:var(--chicken);}
-  .beef .tag{background:var(--beef);}
-  .salmon .tag{background:var(--salmon);}
-  .d-tuna .tag{background:var(--d-tuna);}
-  .d-fish .tag{background:var(--d-fish);}
-  .d-yog .tag{background:var(--d-yog);}
-  .dish .recipe{margin:4px 0 0;padding-left:18px;}
-  .dish .recipe li{margin:4px 0;}
-  .raw{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:middle;}
-  .note{background:#FFF8EC;border:1px solid #F0E2C4;border-radius:8px;padding:10px 12px;font-size:13px;color:#7a5f2e;margin-top:12px;}
-
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .dish.chicken{border-top-color:var(--chicken);} .dish.beef{border-top-color:var(--beef);} .dish.salmon{border-top-color:var(--salmon);}
+  .dish.d-tuna{border-top-color:var(--d-tuna);} .dish.d-fish{border-top-color:var(--d-fish);} .dish.d-yog{border-top-color:var(--d-yog);}
+  .dish h3{font-family:"Bricolage Grotesque","Inter",sans-serif;font-weight:700;font-size:19px;margin:0 0 2px;}
+  .dish .week{font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;}
+  .tag{display:inline-block;font-family:"Space Mono",ui-monospace,monospace;font-size:11px;padding:3px 9px;border-radius:20px;color:#fff;margin-bottom:12px;}
+  .chicken .tag{background:var(--chicken);} .beef .tag{background:var(--beef);} .salmon .tag{background:var(--salmon);}
+  .d-tuna .tag{background:var(--d-tuna);} .d-fish .tag{background:var(--d-fish);} .d-yog .tag{background:var(--d-yog);}
+  .recipe{margin:4px 0 0;padding-left:18px;} .recipe li{margin:4px 0;}
 
   .rotate{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;}
   .wk{border-radius:10px;padding:14px;color:#fff;}
-  .wk b{font-family:"Bricolage Grotesque",sans-serif;font-size:16px;display:block;margin-bottom:2px;}
-  .wk span{font-family:"Space Mono",monospace;font-size:11px;opacity:.9;display:block;line-height:1.5;}
-  .wk.c{background:var(--chicken);}
-  .wk.b{background:var(--beef);}
-  .wk.s{background:var(--salmon);}
+  .wk b{font-family:"Bricolage Grotesque","Inter",sans-serif;font-size:16px;display:block;margin-bottom:2px;}
+  .wk span{font-family:"Space Mono",ui-monospace,monospace;font-size:11px;opacity:.92;display:block;line-height:1.5;}
+  .wk.c{background:var(--chicken);} .wk.b{background:var(--beef);} .wk.s{background:var(--salmon);}
+
+  /* weigh-in log */
+  .logform{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field label{font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .field input{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px 12px;min-width:0;}
+  .field input[type=number]{width:120px;}
+  .btn{font:inherit;font-weight:600;font-size:14px;background:var(--herb-bg);color:var(--on-herb);border:none;border-radius:8px;padding:11px 18px;cursor:pointer;}
+  .btn:hover{filter:brightness(1.08);}
+  .logmsg{font-size:13px;margin-top:10px;min-height:1.2em;color:var(--muted);}
+  .logmsg.err{color:var(--gain);}
+  .stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .chartbox{margin-top:16px;overflow-x:auto;}
+  .chartbox svg{display:block;width:100%;max-width:460px;height:auto;}
+  .loglist{list-style:none;padding:0;margin:16px 0 0;}
+  .loglist li{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;}
+  .loglist .ld{flex:1 1 150px;}
+  .loglist li:last-child{border-bottom:none;}
+  .loglist .w{font-family:"Space Mono",ui-monospace,monospace;font-weight:700;}
+  .loglist .d{font-family:"Space Mono",ui-monospace,monospace;font-size:12px;color:var(--muted);min-width:64px;text-align:right;}
+  .loglist .d.down{color:var(--herb);} .loglist .d.up{color:var(--gain);}
+  .logbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+  .ghost{font:inherit;font-size:13px;font-weight:500;background:none;border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;color:var(--herb);}
+  .ghost:hover{background:var(--chip);}
+  .ghost.danger{color:var(--gain);}
+  .ghost:disabled{opacity:.45;cursor:not-allowed;background:none;}
+  .charttitle{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:20px 0 4px;}
+  .clegend{display:flex;gap:14px;text-transform:none;letter-spacing:0;font-family:"Inter",sans-serif;font-size:12.5px;color:var(--ink);}
+  .clegend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+  .loglist .comp{font-family:"Space Mono",ui-monospace,monospace;font-size:12px;color:var(--muted);white-space:nowrap;}
+  .del{background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);cursor:pointer;font-size:12px;padding:3px 8px;}
+  .del:hover{color:var(--gain);border-color:var(--gain);}
+  .empty{color:var(--muted);font-size:14px;margin-top:14px;}
+
+  /* timetable */
+  .tbl-wrap{overflow-x:auto;margin-top:6px;}
+  table.flow{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px;}
+  table.flow th{text-align:left;font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink);padding:8px 10px;font-weight:400;}
+  table.flow td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.flow td.t{font-family:"Space Mono",ui-monospace,monospace;font-weight:700;color:var(--herb);white-space:nowrap;}
+  table.flow tr.close td{background:var(--chip);}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:middle;}
+  .dot.meal{background:var(--chicken);} .dot.gym{background:var(--beef);} .dot.walk{background:var(--glucose);} .dot.idle{background:var(--muted);}
+  .weekgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:6px;}
+  .day{border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center;background:var(--card);}
+  .dname{font-family:"Space Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .dtype{font-family:"Bricolage Grotesque","Inter",sans-serif;font-weight:700;font-size:12.5px;margin:6px 0;border-radius:6px;padding:4px 2px;color:#fff;}
+  .dtype.w{background:var(--beef);} .dtype.c{background:var(--d-fish);}
+  .dnote{font-size:11px;color:var(--muted);line-height:1.35;}
+  .session h4{font-family:"Bricolage Grotesque","Inter",sans-serif;font-size:15px;margin:0 0 6px;}
 
   /* blood sugar */
-  .glucose-sec .card{border-left:5px solid var(--glucose);}
+  .gcard{border-left:5px solid var(--glucose);}
   .gtweaks{list-style:none;padding:0;margin:6px 0 0;counter-reset:g;}
   .gtweaks li{position:relative;padding:12px 0 12px 42px;border-bottom:1px solid var(--line);}
   .gtweaks li:last-child{border-bottom:none;}
-  .gtweaks li::before{counter-increment:g;content:counter(g);position:absolute;left:0;top:11px;width:26px;height:26px;background:var(--glucose);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace;font-size:13px;font-weight:700;}
-  .gtweaks b{color:var(--ink);}
+  .gtweaks li::before{counter-increment:g;content:counter(g);position:absolute;left:0;top:11px;width:26px;height:26px;background:var(--glucose);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Space Mono",ui-monospace,monospace;font-size:13px;font-weight:700;}
 
-  .shop{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;}
-  .shop h4{font-family:"Bricolage Grotesque",sans-serif;font-size:15px;margin:0 0 2px;display:flex;align-items:center;gap:8px;}
+  /* shopping */
+  .shop{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;}
+  .shop h4{font-family:"Bricolage Grotesque","Inter",sans-serif;font-size:15px;margin:0 0 2px;display:flex;align-items:center;gap:8px;}
   .swatch{width:11px;height:11px;border-radius:3px;display:inline-block;flex:0 0 auto;}
-  .shop .sub{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;}
+  .sub{font-family:"Space Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;}
   .shop ul{list-style:none;padding:0;margin:0;}
   .shop li{padding:5px 0;border-bottom:1px dotted var(--line);display:flex;justify-content:space-between;gap:10px;font-size:13px;}
   .shop li:last-child{border-bottom:none;}
-  .shop li em{color:var(--muted);font-style:normal;font-family:"Space Mono",monospace;font-size:11.5px;white-space:nowrap;}
-  .shop .grouphdr{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--herb);margin:12px 0 2px;padding-top:6px;}
-  .constants{background:var(--herb);color:#fff;border:none;}
-  .constants h4,.constants .grouphdr{color:#fff;}
-  .constants .sub{color:rgba(255,255,255,.7);}
+  .shop li em{color:var(--muted);font-style:normal;font-family:"Space Mono",ui-monospace,monospace;font-size:11.5px;white-space:nowrap;}
+  .grouphdr{font-family:"Space Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--herb);margin:12px 0 2px;padding-top:6px;}
+  .constants{background:var(--herb-bg);color:var(--on-herb);border:none;}
+  .constants h4,.constants .grouphdr{color:var(--on-herb);}
+  .constants .sub{color:rgba(255,255,255,.72);}
   .constants li{border-bottom-color:rgba(255,255,255,.2);}
-  .constants li em{color:rgba(255,255,255,.75);}
+  .constants li em{color:rgba(255,255,255,.78);}
 
-  .supp{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px;}
-  .supp th{text-align:left;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink);padding:8px 10px;font-weight:400;}
-  .supp td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
-  .supp td:first-child{font-weight:600;white-space:nowrap;}
-  .verdict{font-family:"Space Mono",monospace;font-size:11px;padding:2px 8px;border-radius:20px;white-space:nowrap;}
-  .v-some{background:#E7F0EA;color:var(--herb);}
-  .v-weak{background:#FBEBD9;color:#9a6a1f;}
-  .v-rx{background:#F0E4E3;color:var(--beef);}
-
-  /* schedule */
-  .timeline{margin:6px 0 0;}
-  .tl-row{display:grid;grid-template-columns:64px 1fr;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start;}
-  .tl-row:last-child{border-bottom:none;}
-  .tl-time{font-family:"Space Mono",monospace;font-size:13px;font-weight:700;color:var(--herb);padding-top:3px;}
-  .tl-body{display:flex;gap:10px;align-items:start;}
-  .tl-dot{width:12px;height:12px;border-radius:50%;margin-top:5px;flex:0 0 auto;background:var(--muted);}
-  .tl-dot.meal{background:var(--chicken);}
-  .tl-dot.gym{background:var(--beef);}
-  .tl-dot.walk{background:var(--glucose);}
-  .tl-title{font-weight:600;}
-  .tl-desc{color:var(--muted);font-size:13px;}
-  .weekgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:6px;}
-  .day{border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center;}
-  .day .dname{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
-  .day .dtype{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:12.5px;margin:6px 0;border-radius:6px;padding:4px 2px;color:#fff;}
-  .day .dtype.w{background:var(--beef);}
-  .day .dtype.c{background:var(--d-fish);}
-  .day .dnote{font-size:11px;color:var(--muted);line-height:1.35;}
-  @media(max-width:720px){ .weekgrid{grid-template-columns:repeat(2,1fr);} }
+  .disclaimer{margin-top:34px;padding:16px 18px;background:var(--card);border:1px dashed var(--muted);border-radius:10px;font-size:13px;color:var(--muted);}
 
   /* accordion */
-  .acc{border:1px solid var(--line);border-radius:14px;background:#fff;margin-top:14px;overflow:hidden;}
+  .acc{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-top:14px;overflow:hidden;}
   .acc-header{width:100%;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;text-align:left;font-family:inherit;color:inherit;}
   .acc-header:hover{background:var(--chip);}
   .acc-titlewrap .sec-label{margin:0 0 3px;}
@@ -157,19 +198,21 @@
   .acc.collapsed .chev{transform:rotate(-45deg);}
   .acc.collapsed .acc-body{display:none;}
   .acc-controls{display:flex;justify-content:flex-end;margin-top:22px;margin-bottom:-6px;}
-  .acc-controls button{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:none;border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer;color:var(--herb);}
+  .acc-controls button{font-family:"Space Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:none;border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer;color:var(--herb);}
   .acc-controls button:hover{background:var(--chip);}
-  @media print{ .acc-body{display:block !important;} .acc-header{background:none;} .chev,.acc-controls{display:none;} .acc{break-inside:avoid;} }
 
-  .disclaimer{margin-top:34px;padding:16px 18px;background:#fff;border:1px dashed var(--muted);border-radius:10px;font-size:13px;color:var(--muted);}
-
-  @media (max-width:720px){ .two,.rotate,.grid3{grid-template-columns:1fr;} }
+  @media (max-width:720px){
+    .two,.rotate,.grid3{grid-template-columns:1fr;}
+    .goal-row{grid-template-columns:repeat(2,1fr);}
+    .goal-row .g.start{grid-column:1 / -1;}
+    .weekgrid{grid-template-columns:repeat(2,1fr);}
+  }
   @media print{
     body{background:#fff;font-size:12px;}
     .wrap{padding:0;max-width:100%;}
-    section{page-break-inside:avoid;margin-top:24px;}
-    .card,.shop,.dish{box-shadow:none;}
-    .target{border:1px solid var(--ink);}
+    .acc-body{display:block !important;}
+    .chev,.acc-controls,.logform,.del{display:none;}
+    .acc{break-inside:avoid;}
   }
 </style>
 </head>
@@ -177,100 +220,129 @@
 <div class="wrap">
 
   <header class="head">
-    <p class="eyebrow">7-Day Meal Prep Plan · high protein, light dinners, blood-sugar aware</p>
+    <p class="eyebrow">Meal prep · intermittent fasting · daily fasted cardio · 4-day split</p>
     <h1>High-Protein<br>Cutting Plan</h1>
     <div class="targets">
-      <div class="target"><b>~1900</b><span>kcal / day</span></div>
-      <div class="target"><b>~175 g</b><span>protein / day</span></div>
-      <div class="target"><b>2</b><span>prepped dishes / week</span></div>
-      <div class="target"><b>5</b><span>planned lunches</span></div>
+      <div class="target"><b>~1,900</b><span>kcal / day</span></div>
+      <div class="target"><b>~175–190 g</b><span>protein / day</span></div>
+      <div class="target"><b>14–16 h</b><span>daily fast</span></div>
+      <div class="target"><b>7×</b><span>fasted cardio / week</span></div>
     </div>
-    <p class="draftflag">Draft for your review — a starting template, not medical advice. Bigger lunches carry the calories so dinners stay light. Confirm the deficit, portions, and any supplement with a doctor/pharmacist before relying on it — especially with insulin sensitivity in the picture.</p>
+
+    <div class="goals">
+      <p class="goals-label">Goals</p>
+      <div class="goal-row">
+        <div class="g start"><div class="when">Start · Nov 2026</div><div class="kg">175<small>kg</small></div></div>
+        <div class="g goal"><div class="when">16 Apr 2027</div><div class="kg">130<small>kg</small></div></div>
+        <div class="g goal"><div class="when">21 May 2027</div><div class="kg">125<small>kg</small></div></div>
+        <div class="g goal"><div class="when">Mid-Aug 2027</div><div class="kg">115<small>kg</small></div></div>
+        <div class="g goal"><div class="when">Nov 2027</div><div class="kg">100<small>kg</small></div></div>
+      </div>
+    </div>
+
+    <p class="draftflag">Draft for your review — a starting template, not medical advice. At your starting weight, and with fasting plus insulin sensitivity in the picture, get a doctor’s sign-off and basic bloodwork before relying on it.</p>
   </header>
+
+  <!-- LOG -->
+  <section data-open="true">
+    <p class="sec-label">Every Friday · saved in this browser</p>
+    <h2><span class="num">00</span>Weekly weigh-in log</h2>
+    <div class="card">
+      <form class="logform" id="logform" autocomplete="off">
+        <div class="field"><label for="logdate">Date</label><input type="date" id="logdate" required></div>
+        <div class="field"><label for="logkg">Weight (kg)</label><input type="number" id="logkg" step="0.1" min="40" max="400" inputmode="decimal" placeholder="172.4" required></div>
+        <div class="field"><label for="logfat">Body fat %</label><input type="number" id="logfat" step="0.1" min="1" max="80" inputmode="decimal" placeholder="optional"></div>
+        <div class="field"><label for="logmus">Muscle %</label><input type="number" id="logmus" step="0.1" min="1" max="80" inputmode="decimal" placeholder="optional"></div>
+        <button class="btn" type="submit" id="savebtn">Save weigh-in</button>
+      </form>
+      <div class="logmsg" id="logmsg"></div>
+      <div class="logbar">
+        <button type="button" class="ghost danger" id="clearBtn">Clear all entries</button>
+      </div>
+      <div class="stats" id="logstats"></div>
+      <div id="chartWeightWrap"></div>
+      <div id="chartCompWrap"></div>
+      <ul class="loglist" id="loglist"></ul>
+      <p class="small">Weigh in on Friday mornings, after the bathroom and before eating or drinking. Body fat % and muscle % are optional; smart scales swing a lot day to day (hydration matters), so watch the trend across weeks, not one reading. Entries are stored in this browser only: they stay until you delete them or clear this site’s data, and they won’t appear on another device or browser.</p>
+    </div>
+  </section>
 
   <!-- SHAKE -->
   <section>
-    <p class="sec-label">Every day · both plans</p>
-    <h2><span class="num">00</span>The daily protein shake</h2>
+    <p class="sec-label">Every day · with dinner · closes the eating window</p>
+    <h2><span class="num">01</span>The daily protein shake</h2>
     <div class="card shake">
       <ul class="clean">
-        <li>1 scoop ON Whey Isolate <span>~25 g protein</span></li>
+        <li>2 scoops whey protein (any brand) <span>20–25 g per scoop</span></li>
         <li>1 tbsp chia seeds <span>~5 g fibre</span></li>
         <li>1 banana (slightly under-ripe) <em>or</em> berries <span>lower-GI carbs</span></li>
         <li>250 ml skimmed / low-fat milk <span>~8 g protein</span></li>
         <li>Optional: a dash of cinnamon <span>blood sugar</span></li>
       </ul>
-      <div class="macros">
-        <span class="m"><b>~330</b> kcal</span>
-        <span class="m"><b>~35 g</b> protein</span>
-      </div>
+      <div class="macros"><span class="m"><b>~450</b> kcal</span><span class="m"><b>~50–60 g</b> protein</span></div>
+      <div class="note">Drink it with dinner, the last thing before your fast starts. On lifting days that’s right after training, when it helps recovery most. Whatever whey you buy, aim for 20–25 g protein per scoop and low sugar.</div>
     </div>
   </section>
 
   <!-- BREAKFAST -->
   <section>
-    <p class="sec-label">Every day · pick one + daily fruit</p>
-    <h2><span class="num">01</span>Breakfast</h2>
+    <p class="sec-label">Breaks the fast · right after fasted cardio · pick one + fruit</p>
+    <h2><span class="num">02</span>Breakfast</h2>
     <div class="two">
       <div class="card">
         <p class="pick">Option A — Egg sandwich</p>
-        <p><b>3 whole eggs + 3 egg whites</b>, on baladi / whole-wheat bread with cucumber &amp; tomato.</p>
+        <p style="margin:0"><b>3 whole eggs + 3 egg whites</b> on baladi / whole-wheat bread with cucumber &amp; tomato.</p>
         <div class="macros"><span class="m"><b>~34 g</b> protein</span><span class="m"><b>~350</b> kcal</span></div>
       </div>
       <div class="card">
         <p class="pick">Option B — Turkey sandwich</p>
-        <p><b>160 g turkey breast</b> (≈ 5–6 deli slices / lobes, <span class="raw">ready-to-eat weight</span>) on the same bread with lettuce &amp; tomato.</p>
+        <p style="margin:0"><b>160 g turkey breast</b> (≈ 5–6 slices, <span class="raw">ready-to-eat</span>) on the same bread with lettuce &amp; tomato.</p>
         <div class="macros"><span class="m"><b>~30 g</b> protein</span><span class="m"><b>~300</b> kcal</span></div>
       </div>
     </div>
-
     <div class="fruitbox">
-      <h4>+ Your daily fruit — here, with breakfast</h4>
-      <p class="tagline">Fixed slot · 1 serving · lower-GI picks · eaten with protein</p>
-      <div class="list">
+      <h4>+ Your daily fruit — always with breakfast</h4>
+      <p class="tagline">Fixed slot · 1 serving · lower-GI · eaten with protein</p>
+      <div class="chips">
         <span class="chipf">Berries / strawberries</span>
         <span class="chipf">Guava (gawafa)</span>
         <span class="chipf">Grapefruit / small orange</span>
         <span class="chipf">Apple or pear (with skin)</span>
         <span class="chipf">Cantaloupe / watermelon — small cup</span>
       </div>
-      <p class="limit">At breakfast so it's separate from the shake's banana and digests gently with food — but on <b>weight-training days</b> shift it to just after the post-workout shake, so breakfast stays light going into the gym. Limit for weight loss &amp; blood sugar: mango, grapes, dates. Adds ~60–90 kcal — either let the day run ~1950, or drop the lunch pita on fruit days to stay pinned at 1900.</p>
+      <p class="small">Limit for weight loss &amp; blood sugar: mango, grapes, dates. The fruit (~60–90 kcal) is already counted in the daily total.</p>
     </div>
-
-    <div class="note">Egg whites are the cheap protein boost — 3 extra whites add ~11 g protein for barely any calories. Add more any day you're short.</div>
   </section>
 
   <!-- SYSTEM -->
   <section>
     <p class="sec-label">The system</p>
-    <h2><span class="num">02</span>Two dishes a week: one lunch, one light dinner</h2>
+    <h2><span class="num">03</span>Two dishes a week: one lunch, one dinner</h2>
     <div class="card">
-      <p style="margin-top:0">Each week you batch-cook <b>two</b> dishes: a hearty <b>lunch</b> (5 servings — two lunches a week are eat-out) and a lighter, high-protein <b>dinner</b> (7 servings). Rotate the pairings across the month so you're not eating the same protein two weeks running.</p>
+      <p style="margin-top:0">Each week you batch-cook <b>two</b> dishes: a <b>lunch</b> (5 servings — two lunches a week are eat-out) and a small, cheap <b>dinner</b> (7 servings). Rotate the pairings across the month.</p>
       <div class="rotate">
         <div class="wk c"><b>Week 1</b><span>Lunch — Chicken &amp; potato</span><span>Dinner — Tuna &amp; egg salad</span></div>
         <div class="wk b"><b>Week 2</b><span>Lunch — Lean beef &amp; potato</span><span>Dinner — Baked tilapia</span></div>
-        <div class="wk s"><b>Week 3</b><span>Lunch — Salmon &amp; potato</span><span>Dinner — Chicken &amp; yogurt bowl</span></div>
+        <div class="wk s"><b>Week 3</b><span>Lunch — Salmon &amp; potato</span><span>Dinner — Chicken &amp; zabadi bowl</span></div>
       </div>
-      <div class="note">Food safety: cooked chicken/beef keep ~3–4 days refrigerated, fish only ~2–3 days. Prep each dish in <b>two batches</b> across the week (or freeze half) rather than one giant cook-up — especially anything with fish.</div>
+      <div class="note">Food safety: cooked chicken/beef keep ~3–4 days refrigerated, fish ~2–3 days. Prep in <b>two batches</b> per week, or freeze half. Packing lunch on office days is the same prepped box.</div>
     </div>
   </section>
 
-  <!-- LUNCH DISHES -->
+  <!-- LUNCH -->
   <section>
     <p class="sec-label">Lunch · 5 servings / week · per serving</p>
-    <h2><span class="num">03</span>Lunch dishes</h2>
-
+    <h2><span class="num">04</span>Lunch dishes</h2>
     <div class="legend">
       <span><b>Legend:</b></span>
       <span><span class="raw">raw</span> weigh before cooking</span>
       <span><span class="raw">cooked</span> weigh after cooking</span>
-      <span>Meats are raw weight; potato is cooked; meat loses ~25% weight cooking.</span>
+      <span>Meat loses ~25% of its weight when cooked.</span>
     </div>
-
     <div class="saladstd">
       <h4>🥗 The standard salad — on every lunch</h4>
       <p class="tagline">Prep once in bulk · same for all three dishes</p>
-      <p><b>Lettuce, cucumber, tomato, bell pepper, cabbage</b>, dressed with lemon + the 1 tbsp olive oil that's already counted in each lunch, salt, and optional parsley / coriander. No onion, no rocket. Aim for it to fill half the plate.</p>
+      <p><b>Lettuce, cucumber, tomato, bell pepper, cabbage</b>, dressed with lemon, salt, optional parsley / coriander, and the olive oil counted in each lunch below. No onion, no rocket. Fill half the plate.</p>
     </div>
 
     <div class="card dish chicken">
@@ -280,10 +352,9 @@
       <ul class="recipe">
         <li><b>250 g chicken breast</b> <span class="raw">raw</span> — grilled with lemon, garlic, paprika</li>
         <li><b>1 large baked potato</b> (~330 g) <span class="raw">cooked</span></li>
-        <li>1 whole-wheat pita <em>or</em> 2 slices bread</li>
-        <li>+ standard salad (see above)</li>
+        <li>Standard salad + 1 tbsp olive oil</li>
       </ul>
-      <div class="macros"><span class="m"><b>~58 g</b> protein</span><span class="m"><b>~900</b> kcal</span></div>
+      <div class="macros"><span class="m"><b>~60 g</b> protein</span><span class="m"><b>~745</b> kcal</span></div>
     </div>
 
     <div class="card dish beef">
@@ -293,10 +364,9 @@
       <ul class="recipe">
         <li><b>250 g extra-lean mince (5% fat)</b> <span class="raw">raw</span> — browned with garlic, tomato, cumin</li>
         <li><b>1 medium baked potato</b> (~250 g) <span class="raw">cooked</span></li>
-        <li>1 whole-wheat pita <em>or</em> 2 slices bread</li>
-        <li>+ standard salad (see above)</li>
+        <li>Standard salad + 1 tbsp olive oil</li>
       </ul>
-      <div class="macros"><span class="m"><b>~52 g</b> protein</span><span class="m"><b>~920</b> kcal</span></div>
+      <div class="macros"><span class="m"><b>~55 g</b> protein</span><span class="m"><b>~755</b> kcal</span></div>
       <div class="note">Use 5% mince, not regular — regular mince blows the calorie budget for the same protein.</div>
     </div>
 
@@ -306,30 +376,29 @@
       <p class="week">Salmon · lunch</p>
       <ul class="recipe">
         <li><b>220 g salmon fillet</b> <span class="raw">raw</span> — baked with lemon, dill, garlic</li>
-        <li><b>1 large baked potato</b> (~330 g) <span class="raw">cooked</span></li>
-        <li>+ standard salad (see above)</li>
+        <li><b>1 medium baked potato</b> (~250 g) <span class="raw">cooked</span></li>
+        <li>Standard salad + <b>1 tsp</b> olive oil (salmon brings its own fat)</li>
       </ul>
-      <div class="macros"><span class="m"><b>~45 g</b> protein</span><span class="m"><b>~900</b> kcal</span></div>
-      <div class="note">Salmon gives less protein per calorie, so salmon-week days run lower on protein — the dinner that week (chicken &amp; yogurt) makes up for it. No pita here to keep calories in line.</div>
+      <div class="macros"><span class="m"><b>~47 g</b> protein</span><span class="m"><b>~755</b> kcal</span></div>
     </div>
   </section>
 
-  <!-- DINNER DISHES -->
+  <!-- DINNER -->
   <section>
-    <p class="sec-label">Dinner · 7 servings / week · small, cheap &amp; high-protein · per serving</p>
-    <h2><span class="num">04</span>Dinner dishes</h2>
+    <p class="sec-label">Dinner · at 6 or 8 PM · 7 servings / week</p>
+    <h2><span class="num">05</span>Dinner dishes</h2>
 
     <div class="card dish d-tuna">
       <span class="tag">Week 1</span>
       <h3>Tuna &amp; egg salad</h3>
-      <p class="week">Cheap &amp; quick · pairs with chicken-lunch week</p>
+      <p class="week">No cooking · pairs with chicken-lunch week</p>
       <ul class="recipe">
         <li><b>1 can tuna in water</b> <span class="raw">drained ~80 g</span></li>
         <li><b>2 eggs</b>, boiled</li>
-        <li>Small salad — cucumber, tomato, lettuce + a little lemon</li>
+        <li>Small salad — cucumber, tomato, lettuce + lemon</li>
       </ul>
       <div class="macros"><span class="m"><b>~38 g</b> protein</span><span class="m"><b>~300</b> kcal</span></div>
-      <div class="note">One can keeps it cheap and the plate small. Pick the turkey breakfast on this week so you're not egg-heavy.</div>
+      <div class="note">Pick the turkey breakfast more often this week so you’re not egg-heavy.</div>
     </div>
 
     <div class="card dish d-fish">
@@ -346,58 +415,77 @@
     <div class="card dish d-yog">
       <span class="tag">Week 3</span>
       <h3>Grilled chicken &amp; zabadi bowl</h3>
-      <p class="week">Batch-grill chicken · pairs with salmon-lunch week</p>
+      <p class="week">Batch-grill · pairs with salmon-lunch week</p>
       <ul class="recipe">
         <li><b>120 g chicken breast</b> <span class="raw">raw</span> — grilled with garlic, lemon</li>
-        <li><b>1 cup regular zabadi (laban)</b> as the sauce — much cheaper than Greek</li>
+        <li><b>1 cup regular zabadi (laban)</b> as the sauce</li>
         <li>Cucumber</li>
       </ul>
       <div class="macros"><span class="m"><b>~35 g</b> protein</span><span class="m"><b>~270</b> kcal</span></div>
-      <div class="note">Regular zabadi has a bit less protein than Greek but costs a fraction — the trade that keeps this week affordable.</div>
-    </div>
-  </section>
-
-  <!-- SCHEDULE -->
-  <section>
-    <p class="sec-label">Morning gym · post-workout shake · night walks</p>
-    <h2><span class="num">05</span>Daily &amp; weekly timetable</h2>
-
-    <div class="card">
-      <p style="margin-top:0"><b>A typical day.</b> The times are anchors — slide the whole thing to match your real wake time. The <em>order</em> is what matters, not the exact clock.</p>
-      <div class="timeline">
-        <div class="tl-row"><div class="tl-time">7:30</div><div class="tl-body"><span class="tl-dot"></span><div><div class="tl-title">Wake + water</div><div class="tl-desc">Big glass of water to rehydrate.</div></div></div></div>
-        <div class="tl-row"><div class="tl-time">7:50</div><div class="tl-body"><span class="tl-dot meal"></span><div><div class="tl-title">Breakfast — ~60 min before lifting</div><div class="tl-desc">Egg or turkey sandwich for real fuel. Keep it moderate, not stuffed. On weight days, hold the fruit for after the gym.</div></div></div></div>
-        <div class="tl-row"><div class="tl-time">9:00</div><div class="tl-body"><span class="tl-dot gym"></span><div><div class="tl-title">Gym — fueled</div><div class="tl-desc">Weights or cardio depending on the day (see the week below).</div></div></div></div>
-        <div class="tl-row"><div class="tl-time">10:15</div><div class="tl-body"><span class="tl-dot meal"></span><div><div class="tl-title">Post-workout shake + fruit</div><div class="tl-desc">Whey + chia + banana/berries + milk + cinnamon, straight after. Have your daily fruit here on weight days (with breakfast on cardio days).</div></div></div></div>
-        <div class="tl-row"><div class="tl-time">1:30</div><div class="tl-body"><span class="tl-dot meal"></span><div><div class="tl-title">Lunch</div><div class="tl-desc">The week's dish + standard salad. Salad &amp; protein first, potato last.</div></div></div></div>
-        <div class="tl-row"><div class="tl-time">1:45</div><div class="tl-body"><span class="tl-dot walk"></span><div><div class="tl-title">Post-lunch walk</div><div class="tl-desc">10–15 min — flattens the post-meal blood-sugar spike.</div></div></div></div>
-        <div class="tl-row"><div class="tl-time">7:00</div><div class="tl-body"><span class="tl-dot meal"></span><div><div class="tl-title">Dinner — light</div><div class="tl-desc">The week's dinner dish.</div></div></div></div>
-        <div class="tl-row"><div class="tl-time">8:30</div><div class="tl-body"><span class="tl-dot walk"></span><div><div class="tl-title">Night walk — when home</div><div class="tl-desc">20–30 min on nights you're not going out. Extra steps, easy on digestion.</div></div></div></div>
-        <div class="tl-row"><div class="tl-time">11:00</div><div class="tl-body"><span class="tl-dot"></span><div><div class="tl-title">Wind down / sleep</div><div class="tl-desc">Sleep is where recovery and fat loss actually happen.</div></div></div></div>
-      </div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <p style="margin-top:0"><b>The week — 7 gym days, 4 on the weights.</b> Your split. Eating flexes slightly by day type.</p>
-      <div class="weekgrid">
-        <div class="day"><div class="dname">Sun</div><div class="dtype w">Arms</div><div class="dnote">Full lunch + pita</div></div>
-        <div class="day"><div class="dname">Mon</div><div class="dtype w">Legs</div><div class="dnote">Full lunch + pita</div></div>
-        <div class="day"><div class="dname">Tue</div><div class="dtype c">Cardio</div><div class="dnote">Drop pita if you like</div></div>
-        <div class="day"><div class="dname">Wed</div><div class="dtype w">Push</div><div class="dnote">Full lunch + pita</div></div>
-        <div class="day"><div class="dname">Thu</div><div class="dtype w">Pull</div><div class="dnote">Full lunch + pita</div></div>
-        <div class="day"><div class="dname">Fri</div><div class="dtype c">Cardio</div><div class="dnote">Drop pita if you like</div></div>
-        <div class="day"><div class="dname">Sat</div><div class="dtype c">Cardio</div><div class="dnote">Drop pita if you like</div></div>
+      <p class="pick">Going out for dinner?</p>
+      <p style="margin:0">Keep it inside your window (finish by ~8 PM). Order grilled protein (chicken, kofta, fish) with salad, skip the bread, rice, fries and heavy sauces, and still have the shake. Freeze that night’s prepped portion, or for tuna week simply don’t assemble it.</p>
+    </div>
+  </section>
+
+  <!-- TIMETABLE -->
+  <section>
+    <p class="sec-label">Fasting window · fasted cardio daily · lifting 4 days</p>
+    <h2><span class="num">06</span>Daily &amp; weekly timetable</h2>
+
+    <div class="card">
+      <p style="margin-top:0"><b>How the fasting works.</b> Your eating window opens when you break the fast after fasted cardio and closes with dinner at <b>6 or 8 PM</b>. Dinner time follows your wake time: wake early and you can choose 6 or 8; wake late and dinner is at 8. Either way you fast roughly 14–16 hours and eat in about a 7.5-hour window.</p>
+      <div class="tbl-wrap">
+        <table class="flow">
+          <thead><tr><th>Step</th><th>Wake ~9 AM</th><th>Wake ~11 AM</th></tr></thead>
+          <tbody>
+            <tr><td><span class="dot idle"></span>Wake — water, black coffee or tea (no sugar, no milk)</td><td class="t">9:00</td><td class="t">11:00</td></tr>
+            <tr><td><span class="dot walk"></span>Fasted cardio at the gym</td><td class="t">9:15–10:15</td><td class="t">11:15–12:00</td></tr>
+            <tr><td><span class="dot meal"></span>Break the fast — breakfast + fruit</td><td class="t">~10:30</td><td class="t">~12:15</td></tr>
+            <tr><td><span class="dot meal"></span>Lunch</td><td class="t">~1:30</td><td class="t">~3:00</td></tr>
+            <tr><td><span class="dot gym"></span>Lift (lifting weekdays only)</td><td class="t">start 4–5</td><td class="t">start 5–6</td></tr>
+            <tr class="close"><td><span class="dot meal"></span>Shake + dinner — window closes</td><td class="t">6:00 or 8:00</td><td class="t">8:00</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="note" style="margin-bottom:12px"><b>Your cardio session (Tue / Fri / Sat):</b> farmer's walks, lower-back extensions, abs, and an inclined walk.</div>
-      <div class="note">On the 4 <b>weight</b> days, keep the pita and add a couple of extra egg whites to breakfast or dinner — that's when the extra protein pays off most, and it lifts your protein toward the 190 g mark on the days that matter. On <b>cardio</b> days you can drop the lunch pita (~160 kcal) to deepen the cut a little. Night walks are the same every evening you're home — they add to your daily steps, they don't replace the short post-lunch walk.</div>
+      <div class="note">On late-wake days, trim fasted cardio to 30–40 min so the eating window doesn’t shrink. Keep at least 2.5 hours between lunch and lifting.</div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <p style="margin-top:0"><b>Saturday (push, early).</b> Wake → fasted cardio → breakfast + fruit → push about an hour after breakfast → lunch straight after lifting as your post-workout meal → shake + dinner at 6 or 8.</p>
+      <p style="margin:0"><b>Cardio-only days (Mon, Thu, Fri).</b> Wake → fasted cardio → breakfast + fruit → lunch → shake + dinner at 6 or 8. One gym trip only.</p>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <p style="margin-top:0"><b>The week — fasted cardio every day, lifting 4 of them.</b></p>
+      <div class="weekgrid">
+        <div class="day"><div class="dname">Sat</div><div class="dtype w">Push</div><div class="dnote">Early, after breakfast<br>+3 egg whites</div></div>
+        <div class="day"><div class="dname">Sun</div><div class="dtype w">Pull</div><div class="dnote">4–6 PM start<br>+3 egg whites</div></div>
+        <div class="day"><div class="dname">Mon</div><div class="dtype c">Cardio</div><div class="dnote">Fasted only</div></div>
+        <div class="day"><div class="dname">Tue</div><div class="dtype w">Legs</div><div class="dnote">4–6 PM start<br>+3 egg whites</div></div>
+        <div class="day"><div class="dname">Wed</div><div class="dtype w">Arms</div><div class="dnote">4–6 PM start<br>+3 egg whites</div></div>
+        <div class="day"><div class="dname">Thu</div><div class="dtype c">Cardio</div><div class="dnote">Fasted only</div></div>
+        <div class="day"><div class="dname">Fri</div><div class="dtype c">Cardio</div><div class="dnote">Fasted only<br>Weigh-in day</div></div>
+      </div>
+      <div class="session" style="margin-top:16px">
+        <h4>Fasted cardio session — every day, 45–60 min (30–40 on late days)</h4>
+        <ul class="recipe">
+          <li><b>Incline treadmill walk</b> — ~25–30 min at a pace you can hold while talking</li>
+          <li><b>Cycling</b> — ~10–15 min, easy-to-moderate (use the bike more the day after legs)</li>
+          <li><b>Farmer’s walks</b> — 3–4 rounds at a weight you fully control</li>
+        </ul>
+      </div>
+      <div class="note"><b>Fasted-cardio safety:</b> drink water before and during; a pinch of salt in your water helps if you feel flat. If you get dizzy or shaky, stop, and skip the farmer’s walks that day. On the 4 lifting days, add 3 egg whites to breakfast or dinner to push protein toward ~190 g.</div>
     </div>
   </section>
 
   <!-- SHOPPING -->
   <section>
     <p class="sec-label">Buy once a week</p>
-    <h2><span class="num">06</span>Weekly shopping list</h2>
-    <p style="margin-top:-6px;color:var(--muted);font-size:13.5px">The <b>constants</b> block repeats every week. Then add the one week-block for whichever rotation you're on — each bundles that week's lunch (×5) and dinner (×7). Breakfast assumes a 4 egg / 3 turkey split; adjust freely.</p>
+    <h2><span class="num">07</span>Weekly shopping list</h2>
+    <p style="margin-top:-6px;color:var(--muted);font-size:13.5px">The <b>constants</b> block repeats every week. Add the one week-block for whichever rotation you’re on — each covers that week’s lunch (×5) and dinner (×7). Breakfast assumes 4 egg / 3 turkey days; adjust freely.</p>
 
     <div class="card constants" style="margin-top:16px">
       <h4><span class="swatch" style="background:#fff"></span>Every week — shake, breakfast, fruit &amp; salad</h4>
@@ -406,7 +494,7 @@
         <div>
           <p class="grouphdr">Shake ×7</p>
           <ul>
-            <li>Whey isolate <em>7 scoops</em></li>
+            <li>Whey protein <em>14 scoops</em></li>
             <li>Chia seeds <em>~90 g</em></li>
             <li>Bananas / berries <em>7 / 2 punnets</em></li>
             <li>Skimmed milk <em>1.75 L</em></li>
@@ -417,14 +505,14 @@
           <p class="grouphdr">Breakfast ×7</p>
           <ul>
             <li>Eggs <em>1 dozen</em></li>
-            <li>Liquid egg whites <em>~300 ml</em></li>
+            <li>Liquid egg whites <em>~800 ml</em></li>
             <li>Turkey breast <em>500 g</em></li>
             <li>Bread <em>1 loaf</em></li>
             <li>Fruit (from list) <em>7 servings</em></li>
           </ul>
         </div>
         <div>
-          <p class="grouphdr">Standard salad (lunch)</p>
+          <p class="grouphdr">Standard salad</p>
           <ul>
             <li>Lettuce, cabbage <em>for week</em></li>
             <li>Cucumber, tomato <em>for week</em></li>
@@ -437,7 +525,6 @@
     </div>
 
     <div class="grid3" style="margin-top:16px">
-
       <div class="shop">
         <h4><span class="swatch" style="background:var(--chicken)"></span>Week 1</h4>
         <p class="sub">Chicken lunch + Tuna &amp; egg dinner</p>
@@ -445,15 +532,13 @@
         <ul>
           <li>Chicken breast <em>1.25 kg</em></li>
           <li>Potatoes <em>~1.65 kg</em></li>
-          <li>Pita / bread <em>5 pita</em></li>
         </ul>
         <p class="grouphdr">Dinner ×7</p>
         <ul>
           <li>Tuna in water <em>7 cans</em></li>
-          <li>Eggs <em>~14 (2/day)</em></li>
+          <li>Eggs <em>~14</em></li>
         </ul>
       </div>
-
       <div class="shop">
         <h4><span class="swatch" style="background:var(--beef)"></span>Week 2</h4>
         <p class="sub">Beef lunch + Tilapia dinner</p>
@@ -461,23 +546,20 @@
         <ul>
           <li>Extra-lean mince (5%) <em>1.25 kg</em></li>
           <li>Potatoes <em>~1.25 kg</em></li>
-          <li>Pita / bread <em>5 pita</em></li>
           <li>Garlic, tomato (to cook) <em>—</em></li>
         </ul>
         <p class="grouphdr">Dinner ×7</p>
         <ul>
           <li>Tilapia (bolti) fillet <em>~1.05 kg</em></li>
-          <li>Salad veg <em>covered in constants</em></li>
         </ul>
       </div>
-
       <div class="shop">
         <h4><span class="swatch" style="background:var(--salmon)"></span>Week 3</h4>
         <p class="sub">Salmon lunch + Chicken-zabadi dinner</p>
         <p class="grouphdr">Lunch ×5</p>
         <ul>
           <li>Salmon fillet <em>~1.1 kg</em></li>
-          <li>Potatoes <em>~1.65 kg</em></li>
+          <li>Potatoes <em>~1.25 kg</em></li>
         </ul>
         <p class="grouphdr">Dinner ×7</p>
         <ul>
@@ -485,112 +567,215 @@
           <li>Regular zabadi (laban) <em>7 cups</em></li>
         </ul>
       </div>
-
     </div>
-    <div class="note" style="max-width:none">Dinners are now the cheapest part of the plan — eggs, bolti, and regular zabadi. Buy the fish (tilapia, salmon) in two smaller trips per week for freshness rather than all at once.</div>
+    <div class="note">Buy fish (tilapia, salmon) in two smaller trips per week for freshness rather than all at once.</div>
   </section>
 
   <!-- BLOOD SUGAR -->
-  <section class="glucose-sec">
-    <p class="sec-label">For insulin sensitivity · small, meaningful tweaks</p>
-    <h2><span class="num">07</span>Blood-sugar tweaks</h2>
-    <div class="card">
-      <p style="margin-top:0">None of these change what you eat — just how it's prepped, ordered, and timed. Together they meaningfully flatten your post-meal glucose.</p>
-      <ol class="gtweaks">
-        <li><b>Bake the potato, don't mash — and eat it cooled.</b> Baked beats mashed, and letting cooked potato chill in the fridge forms resistant starch that blunts the spike. Your batch-prepped, chilled potato already does this.</li>
-        <li><b>Eat in order: salad &amp; protein first, potato last.</b> Front-loading fibre and protein before starch lowers the glucose rise — costs nothing, same meal.</li>
-        <li><b>Keep lemon (or a splash of vinegar) in the dressing.</b> Acidity lowers the meal's glucose response. Already in your salad.</li>
-        <li><b>Shake: under-ripe banana or berries + a dash of cinnamon.</b> Lower-GI carbs; cinnamon has a small but real blood-sugar benefit.</li>
-        <li><b>Walk 10–15 min after lunch.</b> Not food, but one of the most effective ways to pull glucose out of the blood after your biggest carb meal.</li>
-      </ol>
-      <div class="note">Your fruit choices already help — the low-GI picks eaten with breakfast protein are exactly right. If this is diagnosed insulin resistance or pre-diabetes, treat these as an add-on to medical care, not a replacement — loop in your doctor, especially alongside the berberine/chromium question below.</div>
-    </div>
-  </section>
-
-  <!-- SUPPLEMENTS -->
   <section>
-    <p class="sec-label">OTC in Egypt · honest take</p>
-    <h2><span class="num">08</span>Supplements for fat loss / insulin</h2>
-    <div class="card">
-      <p style="margin-top:0">Straight talk: the diet does ~95% of the work. No over-the-counter pill moves the needle much. Ranked by real evidence:</p>
-      <table class="supp">
-        <thead><tr><th>Supplement</th><th>What it's for</th><th>Evidence</th></tr></thead>
-        <tbody>
-          <tr><td>Berberine</td><td>Insulin sensitivity &amp; blood sugar (the "natural metformin"). Common GI upset; brand quality varies; interacts with meds.</td><td><span class="verdict v-some">Some</span></td></tr>
-          <tr><td>Chromium picolinate</td><td>Marketed for insulin sensitivity &amp; carb cravings. Usually 200 mcg, low-risk. Real effects are small and inconsistent — fine to try, don't expect much.</td><td><span class="verdict v-weak">Weak</span></td></tr>
-          <tr><td>Caffeine + green tea</td><td>Mild appetite / thermogenic bump. Cheap; small but real.</td><td><span class="verdict v-weak">Weak</span></td></tr>
-          <tr><td>Psyllium fibre</td><td>Fullness &amp; steadier blood sugar — mostly an adherence aid.</td><td><span class="verdict v-some">Some</span></td></tr>
-          <tr><td>Metformin / GLP-1s<br>(semaglutide, etc.)</td><td>The genuinely effective options at your weight and for insulin resistance — but prescription. Worth a doctor visit.</td><td><span class="verdict v-rx">Rx</span></td></tr>
-        </tbody>
-      </table>
-      <div class="note">Highest-value move: get basic bloodwork — fasting glucose, HbA1c, thyroid, lipids. That tells you exactly where your insulin sits instead of guessing, and opens the door to the real medications. Clear any supplement with a doctor/pharmacist first, especially berberine.</div>
+    <p class="sec-label">For insulin sensitivity · small, meaningful tweaks</p>
+    <h2><span class="num">08</span>Blood-sugar tweaks</h2>
+    <div class="card gcard">
+      <p style="margin-top:0">None of these change what you eat — just how it’s prepped, ordered and timed.</p>
+      <ol class="gtweaks">
+        <li><b>Bake the potato, don’t mash — and eat it cooled.</b> Chilled cooked potato forms resistant starch that blunts the spike. Your batch-prepped potato already does this.</li>
+        <li><b>Eat in order: salad &amp; protein first, potato last.</b> Same meal, smaller glucose rise.</li>
+        <li><b>Keep lemon (or a splash of vinegar) in the dressing.</b> Acidity lowers the meal’s glucose response.</li>
+        <li><b>Shake: under-ripe banana or berries + a dash of cinnamon.</b> Lower-GI carbs and a small but real benefit.</li>
+        <li><b>Move daily.</b> Your daily cardio and lifting do the heavy lifting here; a 10-min walk after lunch adds to it.</li>
+      </ol>
+      <div class="note">If this is diagnosed insulin resistance or pre-diabetes, treat these as an add-on to medical care, not a replacement — and if you’re ever prescribed blood-sugar medication, check with your doctor before continuing to fast.</div>
     </div>
   </section>
 
   <div class="disclaimer">
-    I'm not a doctor, and I'm not authoritative on what's stocked in Egyptian pharmacies — brands and availability shift. Verify supplement choices and doses with a local pharmacist or physician, and get medical sign-off before starting a strong deficit or self-managing insulin sensitivity at your weight. Macro figures are estimates and may need tuning to how you feel and train; if energy dips on training days, add a carb at lunch or extra egg whites rather than cutting protein.
+    I’m not a doctor. Macro figures are estimates and will need tuning as you go. Get medical sign-off before running a strong deficit with fasting at your starting weight. If energy dips badly on lifting days, add carbs at lunch rather than cutting protein.
   </div>
 
 </div>
 <script>
-  (function(){
-    var wrap = document.querySelector('.wrap');
-    var sections = wrap.querySelectorAll(':scope > section');
-
-    sections.forEach(function(sec){
-      var h2 = sec.querySelector('h2');
-      if(!h2) return;
-      var label = sec.querySelector('.sec-label');
-
-      var header = document.createElement('button');
-      header.className = 'acc-header';
-      header.type = 'button';
-
-      var titleWrap = document.createElement('div');
-      titleWrap.className = 'acc-titlewrap';
-      if(label) titleWrap.appendChild(label);
-      titleWrap.appendChild(h2);
-
-      var chev = document.createElement('span');
-      chev.className = 'chev';
-      chev.setAttribute('aria-hidden','true');
-
-      header.appendChild(titleWrap);
-      header.appendChild(chev);
-
-      var body = document.createElement('div');
-      body.className = 'acc-body';
-      while(sec.firstChild){ body.appendChild(sec.firstChild); }
-
-      sec.appendChild(header);
-      sec.appendChild(body);
-      sec.classList.add('acc','collapsed');
-
-      header.addEventListener('click', function(){ sec.classList.toggle('collapsed'); });
+(function(){
+  /* ---------- accordion ---------- */
+  var wrap=document.querySelector('.wrap');
+  var sections=wrap.querySelectorAll(':scope > section');
+  sections.forEach(function(sec){
+    var h2=sec.querySelector('h2'); if(!h2) return;
+    var label=sec.querySelector('.sec-label');
+    var header=document.createElement('button'); header.className='acc-header'; header.type='button';
+    var tw=document.createElement('div'); tw.className='acc-titlewrap';
+    if(label) tw.appendChild(label); tw.appendChild(h2);
+    var chev=document.createElement('span'); chev.className='chev'; chev.setAttribute('aria-hidden','true');
+    header.appendChild(tw); header.appendChild(chev);
+    var body=document.createElement('div'); body.className='acc-body';
+    while(sec.firstChild){ body.appendChild(sec.firstChild); }
+    sec.appendChild(header); sec.appendChild(body);
+    sec.classList.add('acc');
+    var open=sec.getAttribute('data-open')==='true';
+    if(!open) sec.classList.add('collapsed');
+    header.setAttribute('aria-expanded', open?'true':'false');
+    header.addEventListener('click',function(){
+      var c=sec.classList.toggle('collapsed');
+      header.setAttribute('aria-expanded', c?'false':'true');
     });
+  });
+  var accs=wrap.querySelectorAll('.acc');
+  var controls=document.createElement('div'); controls.className='acc-controls';
+  var btn=document.createElement('button'); btn.type='button'; btn.textContent='Expand all';
+  controls.appendChild(btn);
+  var head=wrap.querySelector('.head'); head.parentNode.insertBefore(controls, head.nextSibling);
+  btn.addEventListener('click',function(){
+    var any=Array.prototype.some.call(accs,function(a){return a.classList.contains('collapsed');});
+    accs.forEach(function(a){a.classList.toggle('collapsed',!any);});
+    btn.textContent=any?'Collapse all':'Expand all';
+  });
+  window.addEventListener('beforeprint',function(){accs.forEach(function(a){a.classList.remove('collapsed');});});
 
-    // expand / collapse all control, placed just under the header
-    var accs = wrap.querySelectorAll('.acc');
-    var controls = document.createElement('div');
-    controls.className = 'acc-controls';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = 'Expand all';
-    controls.appendChild(btn);
-    var head = wrap.querySelector('.head');
-    head.parentNode.insertBefore(controls, head.nextSibling);
+  /* ---------- weigh-in log ---------- */
+  var KEY='cuttingPlan.weightLog.v1';
+  var storageOk=true;
+  var form=document.getElementById('logform');
+  var dateIn=document.getElementById('logdate');
+  var kgIn=document.getElementById('logkg');
+  var fatIn=document.getElementById('logfat');
+  var musIn=document.getElementById('logmus');
+  var saveBtn=document.getElementById('savebtn');
+  var msg=document.getElementById('logmsg');
+  var list=document.getElementById('loglist');
+  var stats=document.getElementById('logstats');
+  var wWrap=document.getElementById('chartWeightWrap');
+  var cWrap=document.getElementById('chartCompWrap');
+  var clearBtn=document.getElementById('clearBtn');
 
-    btn.addEventListener('click', function(){
-      var anyCollapsed = Array.prototype.some.call(accs, function(a){ return a.classList.contains('collapsed'); });
-      accs.forEach(function(a){ a.classList.toggle('collapsed', !anyCollapsed); });
-      btn.textContent = anyCollapsed ? 'Collapse all' : 'Expand all';
+  function pad(n){return (n<10?'0':'')+n;}
+  function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  function parse(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+  function pretty(s){return parse(s).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}
+  function shortDate(s){return parse(s).toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+  function lastFriday(){var d=new Date();d.setDate(d.getDate()-((d.getDay()+2)%7));return d;}
+  function f1(n){return (Math.round(n*10)/10).toFixed(1);}
+  function signed(n){var r=Math.round(n*10)/10; if(r===0) return '±0.0'; return (r>0?'+':'−')+Math.abs(r).toFixed(1);}
+  function isNum(v){return typeof v==='number'&&isFinite(v);}
+  function optNum(s,lo,hi){ if(s===''||s==null) return null; var v=parseFloat(s); if(isNaN(v)||v<lo||v>hi) return undefined; return Math.round(v*10)/10; }
+
+  function load(){
+    try{
+      var raw=localStorage.getItem(KEY); var a=raw?JSON.parse(raw):[];
+      if(!Array.isArray(a)) return [];
+      return a.filter(function(e){return e&&typeof e.date==='string'&&isNum(e.kg);})
+              .map(function(e){return {date:e.date,kg:e.kg,fat:isNum(e.fat)?e.fat:null,muscle:isNum(e.muscle)?e.muscle:null};});
+    }catch(e){storageOk=false;return [];}
+  }
+  function save(a){ try{localStorage.setItem(KEY,JSON.stringify(a));return true;}catch(e){storageOk=false;return false;} }
+  function setMsg(t,err){msg.textContent=t;msg.className='logmsg'+(err?' err':'');}
+  function sorted(a){return a.slice().sort(function(x,y){return x.date<y.date?-1:x.date>y.date?1:0;});}
+  function current(){return sorted(load());}
+
+  function chartSVG(entries,series,minSpan,label){
+    var vals=[];
+    series.forEach(function(s){entries.forEach(function(e){if(isNum(e[s.key]))vals.push(e[s.key]);});});
+    var any=series.some(function(s){return entries.filter(function(e){return isNum(e[s.key]);}).length>=2;});
+    if(!any) return '';
+    var W=600,H=150,pl=52,pr=16,pt=12,pb=30,n=entries.length;
+    var min=Math.min.apply(null,vals),max=Math.max.apply(null,vals);
+    if(max-min<minSpan){var mid=(max+min)/2;min=mid-minSpan/2;max=mid+minSpan/2;}
+    min=Math.floor(min-0.5);max=Math.ceil(max+0.5);
+    function x(i){return pl+(n<2?0:i*(W-pl-pr)/(n-1));}
+    function y(v){return pt+(max-v)*(H-pt-pb)/(max-min);}
+    var t='font:14px Space Mono,monospace';
+    var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+label+'">';
+    [max,(max+min)/2,min].forEach(function(v){
+      svg+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(v)+'" y2="'+y(v)+'" style="stroke:var(--line)" stroke-width="1"/>';
+      svg+='<text x="'+(pl-8)+'" y="'+(y(v)+4)+'" text-anchor="end" style="fill:var(--muted);'+t+'">'+f1(v)+'</text>';
     });
-
-    // always show everything when printing
-    window.addEventListener('beforeprint', function(){
-      accs.forEach(function(a){ a.classList.remove('collapsed'); });
+    series.forEach(function(s){
+      var pts=[];
+      entries.forEach(function(e,i){if(isNum(e[s.key]))pts.push([x(i),y(e[s.key]),e]);});
+      if(pts.length>=2) svg+='<polyline points="'+pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+'" fill="none" style="stroke:'+s.color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+      pts.forEach(function(p){
+        svg+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" style="fill:var(--card);stroke:'+s.color+'" stroke-width="2"><title>'+pretty(p[2].date)+': '+f1(p[2][s.key])+s.unit+'</title></circle>';
+      });
     });
-  })();
+    svg+='<text x="'+pl+'" y="'+(H-8)+'" style="fill:var(--muted);'+t+'">'+shortDate(entries[0].date)+'</text>';
+    svg+='<text x="'+(W-pr)+'" y="'+(H-8)+'" text-anchor="end" style="fill:var(--muted);'+t+'">'+shortDate(entries[n-1].date)+'</text>';
+    return svg+'</svg>';
+  }
+
+  function render(){
+    var entries=current();
+    list.innerHTML='';stats.innerHTML='';wWrap.innerHTML='';cWrap.innerHTML='';
+    var stored=load();
+    clearBtn.disabled=!stored.length;
+    if(!storageOk) setMsg('Your browser is blocking storage here, so weigh-ins can’t be saved.',true);
+    if(!entries.length){
+      list.innerHTML='<li class="empty" style="display:block;border:none">No weigh-ins yet. Log your first Friday above.</li>';
+      return;
+    }
+    var first=entries[0],last=entries[entries.length-1];
+    var s='<span class="m">Latest <b>'+f1(last.kg)+' kg</b></span>';
+    if(entries.length>1) s+='<span class="m">Change since first log <b>'+signed(last.kg-first.kg)+' kg</b></span>';
+    var lf=null,lm=null;
+    for(var k=entries.length-1;k>=0;k--){ if(lf===null&&isNum(entries[k].fat)) lf=entries[k].fat; if(lm===null&&isNum(entries[k].muscle)) lm=entries[k].muscle; }
+    if(lf!==null) s+='<span class="m">Body fat <b>'+f1(lf)+'%</b></span>';
+    if(lm!==null) s+='<span class="m">Muscle <b>'+f1(lm)+'%</b></span>';
+    s+='<span class="m"><b>'+entries.length+'</b> weigh-in'+(entries.length>1?'s':'')+'</span>';
+    stats.innerHTML=s;
+
+    var ws=chartSVG(entries,[{key:'kg',color:'var(--herb)',unit:' kg'}],2,'Weight over time');
+    if(ws) wWrap.innerHTML='<div class="charttitle"><span>Weight (kg)</span></div><div class="chartbox">'+ws+'</div>';
+    var cs=chartSVG(entries,[{key:'fat',color:'var(--gain)',unit:'%'},{key:'muscle',color:'var(--d-fish)',unit:'%'}],4,'Body fat and muscle percentage over time');
+    if(cs) cWrap.innerHTML='<div class="charttitle"><span>Body composition (%)</span><span class="clegend"><span><i style="background:var(--gain)"></i>Body fat</span><span><i style="background:var(--d-fish)"></i>Muscle</span></span></div><div class="chartbox">'+cs+'</div>';
+
+    for(var i=entries.length-1;i>=0;i--){
+      var e=entries[i];
+      var li=document.createElement('li');
+      var diff;
+      if(i>0){var dv=e.kg-entries[i-1].kg;diff='<span class="d '+(dv<0?'down':dv>0?'up':'')+'">'+signed(dv)+'</span>';}
+      else diff='<span class="d">first</span>';
+      var comp='<span class="comp">Fat '+(isNum(e.fat)?f1(e.fat)+'%':'—')+' · Muscle '+(isNum(e.muscle)?f1(e.muscle)+'%':'—')+'</span>';
+      var del='<button type="button" class="del" data-date="'+e.date+'" aria-label="Delete weigh-in">Delete</button>';
+      li.innerHTML='<span class="ld">'+pretty(e.date)+'</span><span class="w">'+f1(e.kg)+' kg</span>'+comp+diff+del;
+      list.appendChild(li);
+    }
+  }
+
+  list.addEventListener('click',function(ev){
+    var b=ev.target.closest('.del'); if(!b) return;
+    var d=b.getAttribute('data-date');
+    if(!confirm('Delete the weigh-in on '+pretty(d)+'?')) return;
+    if(save(load().filter(function(e){return e.date!==d;}))) setMsg('Deleted.'); else setMsg('Couldn’t delete — storage is unavailable.',true);
+    render();
+  });
+
+  clearBtn.addEventListener('click',function(){
+    var n=load().length; if(!n) return;
+    if(!confirm('Delete all '+n+' weigh-in'+(n>1?'s':'')+'? This can’t be undone.')) return;
+    try{localStorage.removeItem(KEY);setMsg('All entries cleared.');}catch(e){setMsg('Couldn’t clear — storage is unavailable.',true);}
+    render();
+  });
+
+  form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var d=dateIn.value, v=parseFloat(kgIn.value);
+    if(!d){setMsg('Pick a date.',true);return;}
+    if(isNaN(v)||v<40||v>400){setMsg('Enter a weight between 40 and 400 kg.',true);return;}
+    var fat=optNum(fatIn.value,1,80), mus=optNum(musIn.value,1,80);
+    if(fat===undefined||mus===undefined){setMsg('Body fat % and muscle % must be between 1 and 80, or left blank.',true);return;}
+    v=Math.round(v*10)/10;
+    var entry={date:d,kg:v,fat:fat,muscle:mus};
+    var a=load(), replaced=false;
+    a=a.map(function(e){if(e.date===d){replaced=true;return entry;}return e;});
+    if(!replaced) a.push(entry);
+    if(save(a)){
+      var note=parse(d).getDay()!==5?' (heads-up: that date isn’t a Friday)':'';
+      setMsg((replaced?'Updated ':'Saved ')+f1(v)+' kg for '+pretty(d)+'.'+note);
+      kgIn.value='';fatIn.value='';musIn.value='';
+    } else setMsg('Couldn’t save — storage is unavailable in this browser.',true);
+    render();
+  });
+
+  dateIn.value=ymd(lastFriday());
+  render();
+})();
 </script>
 </body>
 </html>
